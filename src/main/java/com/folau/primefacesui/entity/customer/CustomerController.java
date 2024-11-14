@@ -8,16 +8,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "Customer", description = "Customer Operations")
-@RequestMapping("/Customers")
+@RequestMapping("/customers")
 @RestController
 @Slf4j
 public class CustomerController {
 
     @Autowired
-    private CustomerService CustomerService;
+    private CustomerService customerService;
 
+    @Operation(summary = "Get All Customers")
+    @GetMapping
+    public ResponseEntity<List<Customer>> getCustomers() {
+        return new ResponseEntity<>(customerService.getAllCustomers(), OK);
+    }
 
 }

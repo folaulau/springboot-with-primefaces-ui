@@ -3,6 +3,7 @@ package com.folau.primefacesui.entity.customer;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.folau.primefacesui.entity.address.Address;
+import com.folau.primefacesui.entity.contract.Contract;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,8 @@ import org.hibernate.annotations.Where;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder
@@ -27,7 +30,7 @@ import java.util.UUID;
 @Where(clause = "deleted = false")
 @DynamicUpdate
 @Entity
-@Table(name = "customers", indexes = {@Index(columnList = "email"),
+@Table(name = "primefaces_ui_customers", indexes = {@Index(columnList = "email"),
         @Index(columnList = "deleted")})
 public class Customer implements Serializable {
 
@@ -56,6 +59,14 @@ public class Customer implements Serializable {
     @Column(name = "date_of_birth", nullable = true)
     private LocalDate dateOfBirth;
 
+    @JsonIgnoreProperties(value = {"customers"})
+    @ManyToMany(cascade = CascadeType.DETACH)
+    @JoinTable(
+            name = "customer_contracts",
+            joinColumns = @JoinColumn(name = "customer_id"),
+            inverseJoinColumns = @JoinColumn(name = "contract_id"))
+    private Set<Contract> contracts;
+
     // This is the main or default address
     @JsonIgnoreProperties(value = {"customer"})
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -73,8 +84,14 @@ public class Customer implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public boolean isAllowedToLogin() {
-        return true;
+    public void addContract(Contract contract) {
+        if (this.contracts == null) {
+            this.contracts = new HashSet<>();
+        }
+        // add only if it does not exist
+         if (this.contracts.stream().noneMatch(c -> c.getId().equals(contract.getId()))) {
+             this.contracts.add(contract);
+         }
     }
 
     @Override

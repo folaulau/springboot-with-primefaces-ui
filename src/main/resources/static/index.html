@@ -13,19 +13,42 @@
 </head>
 <body>
 
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
-
-<select id="basic" name="basic">
-    <option value="0">Select One</option>
-    <option value="1">Option 1</option>
-    <option value="2">Option 2</option>
-    <option value="3">Option 3</option>
-</select>
+<h1>DataTable</h1>
+<p id="table"></p>
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#basic').puidropdown();
+        // call api to get all customers
+        $.ajax({
+            url: 'http://localhost:8085/customers',
+            type: 'GET',
+            success: function(data) {
+                console.log(data);
+                displayTable(data);
+            }
+        });
+
+        function displayTable(customers){
+            var table = '<table>';
+            table += '<tr><th>Id</th><th>First Name</th><th>Last Name</th></tr>';
+            for(var i = 0; i < customers.length; i++){
+                table += '<tr>';
+                table += '<td>' + customers[i].id + '</td>';
+                table += '<td>' + customers[i].firstName + '</td>';
+                table += '<td>' + customers[i].lastName + '</td>';
+                table += '</tr>';
+            }
+            table += '</table>';
+            $('#table').html(table);
+
+            // use primeui datatable
+            $('#table').puidatatable({
+                caption: 'Customers',
+                paginator: {
+                    rows: 10
+                }
+            });
+        }
     });
 </script>
 </body>

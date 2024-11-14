@@ -27,7 +27,7 @@ import java.util.UUID;
 @JsonInclude(value = Include.NON_NULL)
 @DynamicUpdate
 @Entity
-@Table(name = "addresses")
+@Table(name = "primefaces_ui_addresses")
 public class Address implements Serializable {
 
     private static final long serialVersionUID = 1L;
