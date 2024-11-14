@@ -19,35 +19,91 @@
 <script type="text/javascript">
     $(document).ready(function(){
         // call api to get all customers
-        $.ajax({
-            url: 'http://localhost:8085/customers',
-            type: 'GET',
-            success: function(data) {
-                console.log(data);
-                displayTable(data);
-            }
-        });
 
-        function displayTable(customers){
-            var table = '<table>';
-            table += '<tr><th>Id</th><th>First Name</th><th>Last Name</th></tr>';
-            for(var i = 0; i < customers.length; i++){
-                table += '<tr>';
-                table += '<td>' + customers[i].id + '</td>';
-                table += '<td>' + customers[i].firstName + '</td>';
-                table += '<td>' + customers[i].lastName + '</td>';
-                table += '</tr>';
-            }
-            table += '</table>';
-            $('#table').html(table);
+        var contracts = [];
+        var customers = [];
 
-            // use primeui datatable
-            $('#table').puidatatable({
-                caption: 'Customers',
-                paginator: {
-                    rows: 10
+        loadContracts();
+
+        function loadContracts(){
+            $.ajax({
+                url: 'http://localhost:8085/contracts',
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                    contracts = data;
+                    loadCustomers(contracts);
                 }
             });
+        }
+
+        function loadCustomers(contracts){
+            $.ajax({
+                url: 'http://localhost:8085/contract-hours',
+                type: 'GET',
+                success: function(data) {
+                    console.log(data);
+                    customers = data;
+                    displayTable(contracts, customers);
+                }
+            });
+        }
+
+        function displayTable(contracts, customers){
+            console.log(contracts);
+            //field: 'firstName', headerText: 'First Name', sortable: true, editor: 'input'
+            var columns = [];
+            columns.push({ field: 'customerName', headerText: 'Customer Name', sortable: true, editor: 'input' });
+            for (var i = 0; i < contracts.length; i++) {
+                columns.push({ field: contracts[i].uuid, headerText: contracts[i].name, sortable: true, editor: 'input' });
+            }
+
+            console.log(columns);
+
+            // var data = [{
+            //     "customerName": "John Doe",
+            //     "contract-ba952e18f2784f0da666f8e14ef10d22": 3,
+            //     "contract-07f62f923f944040aaf655cb825edde5": 4,
+            //     "contract-64cbcbedd74349a88da298a75d2e7f96": 5,
+            //     "contract-5658cecd3f30477fb484ec7996860c0f": 3,
+            // }];
+
+            $('#table').puidatatable({
+                columns: columns,
+                datasource: customers,
+                paginator: {
+                    rows: 10
+                },
+                rowSelect: function(event, data) {
+                    console.log("rowSelect");
+                    console.log(`event `, event);
+                    console.log(`data `, data);
+                },
+                editMode: 'cell',
+                cellEdit: function (event, data) {
+                    // const updatedRow = data.data;
+                    // const field = data.field;
+                    // const newValue = data.value;
+
+                    // console.log(`Updated ${field} to: ${newValue}`);
+                    console.log("cellEdit");
+                    console.log(`event `, event);
+                    console.log(`data `, data);
+                }
+            });
+        }
+
+        function updateCustomer(customer){
+            console.log(customer);
+            // $.ajax({
+            //     url: 'http://localhost:8085/customers/' + customer.id,
+            //     type: 'PUT',
+            //     contentType: 'application/json',
+            //     data: JSON.stringify(customer),
+            //     success: function(data) {
+            //         console.log(data);
+            //     }
+            // });
         }
     });
 </script>

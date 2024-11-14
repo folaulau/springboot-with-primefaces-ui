@@ -53,9 +53,9 @@ public class Contract implements Serializable {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @JsonIgnoreProperties(value = {"contracts"})
-    @ManyToMany(mappedBy = "contracts", cascade = CascadeType.DETACH)
-    private Set<Customer> customers;
+//    @JsonIgnoreProperties(value = {"contracts"})
+//    @ManyToMany(mappedBy = "contracts", cascade = CascadeType.DETACH)
+//    private Set<Customer> customers;
 
 
     @Override

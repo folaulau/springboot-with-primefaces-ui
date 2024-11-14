@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.OK;
 
 @Tag(name = "Contract", description = "Contract Operations")
@@ -20,4 +22,9 @@ public class ContractController {
     private ContractService contractService;
 
 
+    @Operation(summary = "Get All Contracts")
+    @GetMapping
+    public ResponseEntity<List<Contract>> getAllContracts() {
+        return ResponseEntity.ok(contractService.getAllContracts());
+    }
 }

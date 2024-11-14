@@ -59,13 +59,13 @@ public class Customer implements Serializable {
     @Column(name = "date_of_birth", nullable = true)
     private LocalDate dateOfBirth;
 
-    @JsonIgnoreProperties(value = {"customers"})
-    @ManyToMany(cascade = CascadeType.DETACH)
-    @JoinTable(
-            name = "customer_contracts",
-            joinColumns = @JoinColumn(name = "customer_id"),
-            inverseJoinColumns = @JoinColumn(name = "contract_id"))
-    private Set<Contract> contracts;
+//    @JsonIgnoreProperties(value = {"customers"})
+//    @ManyToMany(cascade = CascadeType.DETACH)
+//    @JoinTable(
+//            name = "customer_contracts",
+//            joinColumns = @JoinColumn(name = "customer_id"),
+//            inverseJoinColumns = @JoinColumn(name = "contract_id"))
+//    private Set<Contract> contracts;
 
     // This is the main or default address
     @JsonIgnoreProperties(value = {"customer"})
@@ -84,16 +84,20 @@ public class Customer implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    public void addContract(Contract contract) {
-        if (this.contracts == null) {
-            this.contracts = new HashSet<>();
-        }
-        // add only if it does not exist
-         if (this.contracts.stream().noneMatch(c -> c.getId().equals(contract.getId()))) {
-             this.contracts.add(contract);
-         }
-    }
+//    public void addContract(Contract contract) {
+//        if (this.contracts == null) {
+//            this.contracts = new HashSet<>();
+//        }
+//        // add only if it does not exist
+//         if (this.contracts.stream().noneMatch(c -> c.getId().equals(contract.getId()))) {
+//             this.contracts.add(contract);
+//         }
+//    }
 
+
+    public String getName() {
+        return this.firstName + " " + this.lastName;
+    }
     @Override
     public String toString() {
         // TODO Auto-generated method stub

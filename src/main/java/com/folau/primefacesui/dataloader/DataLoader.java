@@ -2,6 +2,9 @@ package com.folau.primefacesui.dataloader;
 
 import com.folau.primefacesui.entity.contract.Contract;
 import com.folau.primefacesui.entity.contract.ContractRepository;
+import com.folau.primefacesui.entity.contracthour.ContractHour;
+import com.folau.primefacesui.entity.contracthour.ContractHourDAO;
+import com.folau.primefacesui.entity.contracthour.ContractHourRepository;
 import com.folau.primefacesui.entity.customer.Customer;
 import com.folau.primefacesui.entity.customer.CustomerRepository;
 import com.github.javafaker.Faker;
@@ -24,6 +27,9 @@ public class DataLoader {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private ContractHourRepository contractHourRepository;
 
     private Faker faker = new Faker();
     private Random random = new Random();
@@ -60,7 +66,7 @@ public class DataLoader {
     }
 
     private void loadCustomers(){
-        int maxContractsPerCustomer = 4;
+        int maxContractsPerCustomer = numberOfContracts;
         for (int i = 1; i <= numberOfCustomers; i++) {
 
             Optional<Customer> optionalCustomer = customerRepository.findById((long) i);
@@ -74,7 +80,7 @@ public class DataLoader {
             Name name = faker.name();
             customer.setFirstName(name.firstName());
             customer.setLastName(name.lastName());
-            customer.setEmail(name.username() + "@gmail.com");
+            customer.setEmail((customer.getFirstName()+customer.getLastName()).trim().toLowerCase() + "@gmail.com");
             customer.setDateOfBirth(LocalDate.now().minusYears(random.nextInt(18, 60)));
             customer.setPhoneNumber(faker.phoneNumber().cellPhone());
 
@@ -82,15 +88,32 @@ public class DataLoader {
 
             System.out.println("customer id: "  + i + ", number of contracts: "+ customerMaxNumberOfContracts);
 
+            customer = customerRepository.saveAndFlush(customer);
+
             if(customerMaxNumberOfContracts == 1){
-                customer.addContract(contracts.get(random.nextInt(0, numberOfContracts - 1)));
+                Contract contract = contracts.get(random.nextInt(0, numberOfContracts));
+
+                ContractHour contractHour = new ContractHour();
+                contractHour.setCustomer(customer);
+                contractHour.setContract(contract);
+                contractHour.setHours(random.nextInt(20, 100));
+                contractHour.setHoursUsed(random.nextInt(2, 18));
+
+                contractHourRepository.saveAndFlush(contractHour);
+
             }else {
                 for (int con = 1; con <= customerMaxNumberOfContracts; con++){
-                    customer.addContract(contracts.get(random.nextInt(0, numberOfContracts - 1)));
+                    Contract contract = contracts.get(random.nextInt(0, numberOfContracts));
+
+                    ContractHour contractHour = new ContractHour();
+                    contractHour.setCustomer(customer);
+                    contractHour.setContract(contract);
+                    contractHour.setHours(random.nextInt(20, 100));
+                    contractHour.setHoursUsed(random.nextInt(2, 18));
+
+                    contractHourRepository.saveAndFlush(contractHour);
                 }
             }
-
-            customer = customerRepository.saveAndFlush(customer);
         }
     }
 }
