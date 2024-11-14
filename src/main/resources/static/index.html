@@ -53,7 +53,7 @@
             console.log(contracts);
             //field: 'firstName', headerText: 'First Name', sortable: true, editor: 'input'
             var columns = [];
-            columns.push({ field: 'customerName', headerText: 'Customer Name', sortable: true, editor: 'input' });
+            columns.push({ field: 'customerName', headerText: 'Customer Name', sortable: true });
             for (var i = 0; i < contracts.length; i++) {
                 columns.push({ field: contracts[i].uuid, headerText: contracts[i].name, sortable: true, editor: 'input' });
             }
